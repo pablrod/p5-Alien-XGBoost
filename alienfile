@@ -1,0 +1,32 @@
+use alienfile;
+use Alien::git;
+use FFI::CheckLib;
+use FFI::Platypus;
+
+probe sub {
+    my ($library) = FFI::CheckLib::find_lib_or_die(lib => 'xgboost',
+        verify => sub {
+            my($name, $libpath) = @_;
+            my $platypus = FFI::Platypus->new;
+            $platypus->lib($libpath);
+     
+            my $f = $platypus->function('XGDMatrixCreateFromMat_omp', [] => 'int'); # This function gets defined in the latests commits
+        }
+    );
+    return (defined $library ? 'system' : 'share');
+};
+
+share {
+  download [
+     [Alien::git::exe, 'clone', '--recursive', 'https://github.com/dmlc/xgboost.git'],
+  ];
+
+  plugin 'Extract::Directory' => ();
+  extract ['xgboost'];
+
+  plugin 'Build::CMake';
+  build [
+    [ '%{cmake}', -G => '%{cmake_generator}', '-DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=true', '-DCMAKE_INSTALL_PREFIX:PATH=%{.install.prefix}', '.' ],
+    '%{make}',
+  ];
+};
