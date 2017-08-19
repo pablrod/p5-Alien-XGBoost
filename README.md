@@ -1,6 +1,6 @@
 # NAME
 
-AI::XGBoost - Alien package to find, and build if necessary XGBoost library
+Alien::XGBoost - Alien package to find, and build if necessary XGBoost library
 
 # VERSION
 
@@ -33,3 +33,9 @@ Pablo Rodríguez González <pablo.rodriguez.gonzalez@gmail.com>
 # COPYRIGHT AND LICENSE
 
 Copyright (c) 2017 by Pablo Rodríguez González.
+
+This is free software, licensed under:
+
+```
+The Apache License, Version 2.0, January 2004
+```

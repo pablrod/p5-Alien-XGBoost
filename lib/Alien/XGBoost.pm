@@ -1,6 +1,8 @@
-package AI::XGBoost;
+package Alien::XGBoost;
 use strict;
 use warnings;
+
+use base qw( Alien::Base );
 
 # VERSION
 

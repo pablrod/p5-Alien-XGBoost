@@ -3,6 +3,7 @@ use Alien::git;
 use FFI::CheckLib;
 use FFI::Platypus;
 
+
 probe sub {
     my ($library) = FFI::CheckLib::find_lib_or_die(lib => 'xgboost',
         verify => sub {
@@ -10,7 +11,7 @@ probe sub {
             my $platypus = FFI::Platypus->new;
             $platypus->lib($libpath);
      
-            my $f = $platypus->function('XGDMatrixCreateFromMat_omp', [] => 'int'); # This function gets defined in the latests commits
+            my $f = $platypus->function('XGDMatrixCreateFromMat_omp', [] => 'int'); # This function was defined recently
         }
     );
     return (defined $library ? 'system' : 'share');
@@ -23,10 +24,21 @@ share {
 
   plugin 'Extract::Directory' => ();
   extract ['xgboost'];
-
+   
   plugin 'Build::CMake';
   build [
-    [ '%{cmake}', -G => '%{cmake_generator}', '-DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=true', '-DCMAKE_INSTALL_PREFIX:PATH=%{.install.prefix}', '.' ],
-    '%{make}',
+    [ '%{cmake}', -G => '%{cmake_generator}', '.' ],
+    '%{make} -j `grep processor /proc/cpuinfo | wc -l` ',
+    'mkdir -p %{.install.stage}/dynamic',
+    'mkdir -p %{.install.stage}/bin',
+    ['cp lib/libxgboost.so %{.install.stage}/dynamic/libxgboost.so'],
+    ['cp xgboost %{.install.stage}/bin/xgboost'],
   ];
+    meta_prop->{destdir} = 0;
+    gather sub {
+        my($build) = @_;
+        $build->runtime_prop->{dynamic} = 'libxgboost.so';
+        $build->runtime_prop->{command} = 'xgboost';
+    };
 };
+
