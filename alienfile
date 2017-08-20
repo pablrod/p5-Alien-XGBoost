@@ -3,8 +3,17 @@ use Alien::git;
 use FFI::CheckLib;
 use FFI::Platypus;
 use Sys::Info;
+use Config;
+
+configure {
+    requires 'Alien::git';
+    requires 'FFI::CheckLib';
+    requires 'FFI::Platypus';
+    requires 'Sys::Info';
+};
 
 my $cpu_count = Sys::Info->new()->device('CPU')->count;
+my $command = 'xgboost' . $Config{'_exe'};
 
 probe sub {
     my ($library) = FFI::CheckLib::find_lib_or_die(lib => 'xgboost',
@@ -16,7 +25,11 @@ probe sub {
             my $f = $platypus->function('XGDMatrixCreateFromMat_omp', [] => 'int'); # This function was defined recently
         }
     );
-    return (defined $library ? 'system' : 'share');
+    # Until I learn how to make system installs
+    #  compatible with Alien::XGBoost->dynamic_libs
+    #  always make a share install
+    #return (defined $library ? 'system' : 'share');
+    return 'share';
 };
 
 share {
@@ -33,15 +46,16 @@ share {
     '%{make}' . " -j $cpu_count",
     'mkdir -p %{.install.stage}/dynamic',
     'mkdir -p %{.install.stage}/bin',
-    ['%{cp}', 'lib/libxgboost.so', '%{.install.stage}/dynamic/libxgboost.so'],
-    ['%{cp}', 'xgboost', '%{.install.stage}/bin/xgboost'],
+    ['%{cp}', 'lib/libxgboost.so', '%{.install.stage}/dynamic/'],
+    ['%{cp}', $command, '%{.install.stage}/bin/'],
   ];
-    meta_prop->{destdir} = 0;
-    gather sub {
-        my($build) = @_;
-        $build->runtime_prop->{dynamic} = 'libxgboost.so';
-        $build->runtime_prop->{command} = 'xgboost';
-    };
+
+  meta_prop->{destdir} = 0;
+  plugin 'Gather::IsolateDynamic';
+  gather sub {
+     my($build) = @_;
+     $build->runtime_prop->{command} = $command;
+  };
 };
 
 
