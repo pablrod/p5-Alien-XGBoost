@@ -33,8 +33,8 @@ share {
     '%{make}' . " -j $cpu_count",
     'mkdir -p %{.install.stage}/dynamic',
     'mkdir -p %{.install.stage}/bin',
-    ['cp lib/libxgboost.so %{.install.stage}/dynamic/libxgboost.so'],
-    ['cp xgboost %{.install.stage}/bin/xgboost'],
+    ['%{cp}', 'lib/libxgboost.so', '%{.install.stage}/dynamic/libxgboost.so'],
+    ['%{cp}', 'xgboost', '%{.install.stage}/bin/xgboost'],
   ];
     meta_prop->{destdir} = 0;
     gather sub {
@@ -43,4 +43,5 @@ share {
         $build->runtime_prop->{command} = 'xgboost';
     };
 };
+
 
