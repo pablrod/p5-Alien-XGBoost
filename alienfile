@@ -15,11 +15,14 @@ configure {
 };
 
 my $cpu_count = Sys::Info->new()->device('CPU')->count;
+my $name = 'xgboost';
 my $command   = 'xgboost' . $Config{'_exe'};
+my $libprefix = $^O ne 'MSWin32' ? 'lib' : '';
+my $libname = $libprefix . $name . '.' . $Config{'so'};
 
 probe sub {
     my ($library) = FFI::CheckLib::find_lib_or_die(
-        lib    => 'xgboost',
+        lib    => $name,
         verify => sub {
             my ( $name, $libpath ) = @_;
             my $platypus = FFI::Platypus->new;
@@ -33,10 +36,10 @@ probe sub {
 };
 
 share {
-    download [ [ Alien::git::exe, 'clone', '--recursive', 'https://github.com/dmlc/xgboost.git' ], ];
+    download [ [ Alien::git::exe, 'clone', '--recursive', 'https://github.com/dmlc/xgboost.git', $name ], ];
 
     plugin 'Extract::Directory' => ();
-    extract ['xgboost'];
+    extract [$name];
 
     plugin 'Build::CMake';
     build [
@@ -47,7 +50,7 @@ share {
             path( $build->install_prop->{stage}, 'dynamic' )->mkpath;
             path( $build->install_prop->{stage}, 'bin' )->mkpath;
         },
-        [ '%{cp}', 'lib/libxgboost.so', '%{.install.stage}/dynamic/' ],
+        [ '%{cp}', 'lib/' . $libname, '%{.install.stage}/dynamic/' ],
         [ '%{cp}', $command,            '%{.install.stage}/bin/' ],
     ];
 
@@ -62,7 +65,7 @@ share {
 sys {
     gather sub {
         my ($build) = @_;
-        $build->runtime_prop->{ffi_name} = 'xgboost';
+        $build->runtime_prop->{ffi_name} = $name;
     };
 };
 
