@@ -15,55 +15,54 @@ configure {
 };
 
 my $cpu_count = Sys::Info->new()->device('CPU')->count;
-my $command = 'xgboost' . $Config{'_exe'};
+my $command   = 'xgboost' . $Config{'_exe'};
 
 probe sub {
-    my ($library) = FFI::CheckLib::find_lib_or_die(lib => 'xgboost',
+    my ($library) = FFI::CheckLib::find_lib_or_die(
+        lib    => 'xgboost',
         verify => sub {
-            my($name, $libpath) = @_;
+            my ( $name, $libpath ) = @_;
             my $platypus = FFI::Platypus->new;
             $platypus->lib($libpath);
-     
-            my $f = $platypus->function('XGDMatrixCreateFromMat_omp', [] => 'int'); # This function was defined recently
+
+            my $f =
+              $platypus->function( 'XGDMatrixCreateFromMat_omp', [] => 'int' );    # This function was defined recently
         }
     );
-    return (defined $library ? 'system' : 'share');
+    return ( defined $library ? 'system' : 'share' );
 };
 
 share {
-  download [
-     [Alien::git::exe, 'clone', '--recursive', 'https://github.com/dmlc/xgboost.git'],
-  ];
+    download [ [ Alien::git::exe, 'clone', '--recursive', 'https://github.com/dmlc/xgboost.git' ], ];
 
-  plugin 'Extract::Directory' => ();
-  extract ['xgboost'];
-   
-  plugin 'Build::CMake';
-  build [
-    [ '%{cmake}', -G => '%{cmake_generator}', '.' ],
-    '%{make}' . " -j $cpu_count",
-    sub {
-        my ($build) = @_; 
-        path($build->install_prop->{stage}, 'dynamic')->mkpath;
-        path($build->install_prop->{stage}, 'bin')->mkpath
-    },
-    ['%{cp}', 'lib/libxgboost.so', '%{.install.stage}/dynamic/'],
-    ['%{cp}', $command, '%{.install.stage}/bin/'],
-  ];
+    plugin 'Extract::Directory' => ();
+    extract ['xgboost'];
 
-  meta_prop->{destdir} = 0;
-  plugin 'Gather::IsolateDynamic';
-  gather sub {
-     my($build) = @_;
-     $build->runtime_prop->{command} = $command;
-  };
+    plugin 'Build::CMake';
+    build [
+        [ '%{cmake}', @{ meta->prop->{plugin_build_cmake}->{args} }],
+        '%{make}' . " -j $cpu_count",
+        sub {
+            my ($build) = @_;
+            path( $build->install_prop->{stage}, 'dynamic' )->mkpath;
+            path( $build->install_prop->{stage}, 'bin' )->mkpath;
+        },
+        [ '%{cp}', 'lib/libxgboost.so', '%{.install.stage}/dynamic/' ],
+        [ '%{cp}', $command,            '%{.install.stage}/bin/' ],
+    ];
+
+    meta_prop->{destdir} = 0;
+    plugin 'Gather::IsolateDynamic';
+    gather sub {
+        my ($build) = @_;
+        $build->runtime_prop->{command} = $command;
+    };
 };
 
 sys {
-  gather sub {
-     my($build) = @_;
-     $build->runtime_prop->{ffi_name} = 'xgboost';
-  };
+    gather sub {
+        my ($build) = @_;
+        $build->runtime_prop->{ffi_name} = 'xgboost';
+    };
 };
-
 
