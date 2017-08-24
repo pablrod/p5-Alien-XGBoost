@@ -65,6 +65,15 @@ But this information could be useful:
 - [FFI::Platypus](https://metacpan.org/pod/FFI::Platypus)
 - [NativeCall](https://metacpan.org/pod/NativeCall)
 
+# ACKNOWLEDGEMENTS
+
+Thanks to Graham Ollis <plicease@cpan.org> for all the support and making so many great modules
+that make easier to make Alien's:
+
+- [Alien::Build](https://metacpan.org/pod/Alien::Build)
+- [Alien::Build::Plugin::Build::CMake](https://metacpan.org/pod/Alien::Build::Plugin::Build::CMake)
+- [FFI::CheckLib](https://metacpan.org/pod/FFI::CheckLib)
+
 # AUTHOR
 
 Pablo Rodríguez González <pablo.rodriguez.gonzalez@gmail.com>

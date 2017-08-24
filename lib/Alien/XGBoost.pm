@@ -81,6 +81,21 @@ the dynamic library and command in your system
 
 =back
 
+=head1 ACKNOWLEDGEMENTS
+
+Thanks to Graham Ollis <plicease@cpan.org> for all the support and making so many great modules
+that make easier to make Alien's:
+
+=over 4
+
+=item L<Alien::Build>
+
+=item L<Alien::Build::Plugin::Build::CMake>
+
+=item L<FFI::CheckLib>
+
+=back
+
 =cut
 
 1;
