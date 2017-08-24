@@ -15,10 +15,8 @@ configure {
 };
 
 my $cpu_count = Sys::Info->new()->device('CPU')->count;
-my $name = 'xgboost';
+my $name      = 'xgboost';
 my $command   = 'xgboost' . $Config{'_exe'};
-my $libprefix = $^O ne 'MSWin32' ? 'lib' : '';
-my $libname = $libprefix . $name . '.' . $Config{'so'};
 
 probe sub {
     my ($library) = FFI::CheckLib::find_lib_or_die(
@@ -43,15 +41,16 @@ share {
 
     plugin 'Build::CMake';
     build [
-        [ '%{cmake}', @{ meta->prop->{plugin_build_cmake}->{args} }],
+        [ '%{cmake}', @{ meta->prop->{plugin_build_cmake}->{args} } ],
         '%{make}' . " -j $cpu_count",
         sub {
             my ($build) = @_;
             path( $build->install_prop->{stage}, 'dynamic' )->mkpath;
             path( $build->install_prop->{stage}, 'bin' )->mkpath;
+            path($_)->copy( path( $build->install_prop->{stage} )->child('dynamic')->child( path($_)->basename ) )
+              for FFI::CheckLib::find_lib( libpath => 'lib', lib => $name );
         },
-        [ '%{cp}', 'lib/' . $libname, '%{.install.stage}/dynamic/' ],
-        [ '%{cp}', $command,            '%{.install.stage}/bin/' ],
+        [ '%{cp}', $command, '%{.install.stage}/bin/' ],
     ];
 
     meta_prop->{destdir} = 0;
