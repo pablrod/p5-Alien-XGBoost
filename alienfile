@@ -49,8 +49,8 @@ share {
             path( $build->install_prop->{stage}, 'bin' )->mkpath;
             path($_)->copy( path( $build->install_prop->{stage} )->child('dynamic')->child( path($_)->basename ) )
               for FFI::CheckLib::find_lib( libpath => 'lib', lib => $name );
+            path( $command )->copy( path( $build->install_prop->{stage}, 'bin' ) );
         },
-        [ '%{cp}', $command, '%{.install.stage}/bin/' ],
     ];
 
     meta_prop->{destdir} = 0;
