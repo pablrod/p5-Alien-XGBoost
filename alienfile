@@ -25,11 +25,7 @@ probe sub {
             my $f = $platypus->function('XGDMatrixCreateFromMat_omp', [] => 'int'); # This function was defined recently
         }
     );
-    # Until I learn how to make system installs
-    #  compatible with Alien::XGBoost->dynamic_libs
-    #  always make a share install
-    #return (defined $library ? 'system' : 'share');
-    return 'share';
+    return (defined $library ? 'system' : 'share');
 };
 
 share {
@@ -55,6 +51,13 @@ share {
   gather sub {
      my($build) = @_;
      $build->runtime_prop->{command} = $command;
+  };
+};
+
+sys {
+  gather sub {
+     my($build) = @_;
+     $build->runtime_prop->{ffi_name} = 'xgboost';
   };
 };
 
