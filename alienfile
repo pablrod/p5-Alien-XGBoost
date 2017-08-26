@@ -43,10 +43,10 @@ share {
     build [
         [ '%{cmake}', @{ meta->prop->{plugin_build_cmake}->{args} } ],
         '%{make}' . " -j $cpu_count",
+        '%{mkdir_deep} "%{.install.stage}/dynamic"',
+        '%{mkdir_deep} "%{.install.stage}/bin"',
         sub {
             my ($build) = @_;
-            path( $build->install_prop->{stage}, 'dynamic' )->mkpath;
-            path( $build->install_prop->{stage}, 'bin' )->mkpath;
             path($_)->copy( path( $build->install_prop->{stage} )->child('dynamic')->child( path($_)->basename ) )
               for FFI::CheckLib::find_lib( libpath => 'lib', lib => $name );
             path( $command )->copy( path( $build->install_prop->{stage}, 'bin' ) );
