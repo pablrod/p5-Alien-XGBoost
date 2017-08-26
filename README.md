@@ -4,7 +4,7 @@ Alien::XGBoost - Alien package to find, and build if necessary XGBoost dynamic l
 
 # VERSION
 
-version 0.02
+version 0.03
 
 # SYNOPSIS
 
