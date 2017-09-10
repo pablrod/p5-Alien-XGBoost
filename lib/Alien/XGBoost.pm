@@ -25,6 +25,14 @@ use base qw( Alien::Base );
 
 Alien package to find, and build if necessary XGBoost dynamic library.
 
+=begin markdown
+
+[![Build Status](https://travis-ci.org/pablrod/p5-Alien-XGBoost.png?branch=master)](https://travis-ci.org/pablrod/p5-Alien-XGBoost)
+[![Build status](https://ci.appveyor.com/api/projects/status/nl46f64tjiyaveql/branch/master?svg=true)](https://ci.appveyor.com/project/pablrod/p5-alien-xgboost/branch/master)
+
+=end markdown
+
+
 This module is to be used by other modules that need the XGBoost
 dynamic library available, indeed I've made this for L<AI::XGBoost>.
 

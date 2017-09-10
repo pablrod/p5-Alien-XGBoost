@@ -4,7 +4,7 @@ Alien::XGBoost - Alien package to find, and build if necessary XGBoost dynamic l
 
 # VERSION
 
-version 0.04
+version 0.05
 
 # SYNOPSIS
 
@@ -21,6 +21,9 @@ my $error = XGBGetLastError();
 # DESCRIPTION
 
 Alien package to find, and build if necessary XGBoost dynamic library.
+
+[![Build Status](https://travis-ci.org/pablrod/p5-Alien-XGBoost.png?branch=master)](https://travis-ci.org/pablrod/p5-Alien-XGBoost)
+[![Build status](https://ci.appveyor.com/api/projects/status/nl46f64tjiyaveql/branch/master?svg=true)](https://ci.appveyor.com/project/pablrod/p5-alien-xgboost/branch/master)
 
 This module is to be used by other modules that need the XGBoost
 dynamic library available, indeed I've made this for [AI::XGBoost](https://metacpan.org/pod/AI::XGBoost).
