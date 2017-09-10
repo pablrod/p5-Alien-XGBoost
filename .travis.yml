@@ -5,7 +5,7 @@ perl:
 
 sudo: false
 before_install:
-  - cpanm -n Alien::git
+  - cpanm -n Alien::git FFI::Platypus FFI::CheckLib Sys::Info Path::Tiny
   - dzil authordeps | cpanm -n
   - dzil listdeps | cpanm -n
 
