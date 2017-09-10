@@ -5,7 +5,7 @@ perl:
 
 sudo: false
 before_install:
-    - cpanm -n Alien::git FFI::Platypus FFI::CheckLib Sys::Info Path::Tiny Pod::Weaver::Section::Contributors Test::Pod::Coverage
+  - cpanm -n Alien::git FFI::Platypus FFI::CheckLib Sys::Info Path::Tiny Pod::Weaver::Section::Contributors Test::Pod::Coverage
   - dzil authordeps | cpanm -n
   - dzil listdeps | cpanm -n
   - export ALIEN_XGBOOST_CPUCOUNT=4
