@@ -5,6 +5,7 @@ perl:
 
 sudo: false
 before_install:
+  - cpanm -n Alien::git
   - dzil authordeps | cpanm -n
   - dzil listdeps | cpanm -n
 
