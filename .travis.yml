@@ -5,4 +5,7 @@ perl:
 
 sudo: false
 before_install:
+  - dzil authordeps --missing | cpanm -n
+  - dzil listdeps --missing | cpanm -n
+
   - eval $(curl https://travis-perl.github.io/init) --auto
